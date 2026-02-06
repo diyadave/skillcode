@@ -21,6 +21,7 @@ app.add_middleware(
         "http://localhost:5500",
         "http://localhost:5501",
         "https://magical-pasca-09f99a.netlify.app",
+        "https://skillcodeai.netlify.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
