@@ -3,16 +3,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from .database import Base, get_engine, get_db
-Base.metadata.create_all(bind=get_engine())
 from .schemas import ContactCreate
 from .crud import create_contact
 from .google_sheet import send_to_sheet
 
 app = FastAPI()
-from dotenv import load_dotenv
-load_dotenv()
 
-# ✅ CORS FIX (THIS IS THE KEY)
+# 🚫 DO NOT use load_dotenv on Railway
+# load_dotenv() ← REMOVE THIS
+
+# ✅ CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -22,15 +22,20 @@ app.add_middleware(
         "http://localhost:5501",
     ],
     allow_credentials=True,
-    allow_methods=["*"],   # MUST allow OPTIONS
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
-Base.metadata.create_all(bind=engine)
+# ✅ DATABASE INIT (SAFE)
+@app.on_event("startup")
+def startup():
+    engine = get_engine()
+    if engine:
+        Base.metadata.create_all(bind=engine)
 
 @app.post("/contact")
 def submit_contact(data: ContactCreate, db: Session = Depends(get_db)):
-    contact = create_contact(db, data)  # ✅ DB always works
+    create_contact(db, data)
 
     try:
         send_to_sheet(
