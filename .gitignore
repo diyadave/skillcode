@@ -1,0 +1,10 @@
+# secrets
+.env
+service_account.json
+
+# python
+__pycache__/
+*.pyc
+
+# venv
+venv/
