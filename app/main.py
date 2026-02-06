@@ -2,7 +2,8 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
-from .database import Base, engine, get_db
+from .database import Base, get_engine, get_db
+Base.metadata.create_all(bind=get_engine())
 from .schemas import ContactCreate
 from .crud import create_contact
 from .google_sheet import send_to_sheet
